@@ -1,0 +1,38 @@
+[
+ {
+  "directory": "/home/rgramati/Documents/aoc/2019/Intcode",
+  "arguments": [
+   "clang",
+   "-Iinclude",
+   "-Wall",
+   "-Wextra",
+   "-g",
+   "-Wno-initializer-overrides",
+   "-fsanitize=address",
+   "-static-libsan",
+   "-o",
+   ".build/src/core.o",
+   "-c",
+   "src/core.c"
+  ],
+  "file": "src/core.c"
+ },
+ {
+  "directory": "/home/rgramati/Documents/aoc/2019/Intcode",
+  "arguments": [
+   "clang",
+   "-Iinclude",
+   "-Wall",
+   "-Wextra",
+   "-g",
+   "-Wno-initializer-overrides",
+   "-fsanitize=address",
+   "-static-libsan",
+   "-o",
+   ".build/src/process.o",
+   "-c",
+   "src/process.c"
+  ],
+  "file": "src/process.c"
+ }
+]

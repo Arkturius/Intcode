@@ -1,0 +1,42 @@
+(entry):
+	jz		0, (start) 
+(x):
+	res
+(y):
+	res
+(size):
+	res
+(it):
+	res
+(comp):
+	res
+
+(start):
+	clt		0, 0, (it)
+	rel		(list)
+	jz		0, (loop)
+
+(inc):
+	rel		3
+	add		(it), 1, (it)
+(loop):
+	ceq		(it), (size), (comp)
+	jnz		(comp), (out0)
+	ceq		(x), [rel+0], (comp)
+	jz		(comp), (inc)
+	ceq		(y), [rel+1], (comp)
+	jz		(comp), (inc)
+	jnz		[rel+2], (out1)
+
+(out0):
+	out		0
+	jz		0, (loop_end)
+(out1):
+	out		1
+
+(loop_end):
+	mul		(it), -3, (it)
+	rel		(it)
+
+	hlt
+(list):
