@@ -8,13 +8,13 @@ INC_DIR		:=	include
 SRCS_DIR	:=	src
 OBJS_DIR	:=	.build
 
-SRCS		:=	core.c process.c ops.c runner.c
+SRCS		:=	core.c process.c ops.c runner.c grid.c
 
 SRCS		:=	$(addprefix $(SRCS_DIR)/, $(SRCS))
 OBJS		:=	$(addprefix $(OBJS_DIR)/, $(SRCS:%.c=%.o))
 
 CC			:=	clang
-CFLAGS		:=	-Wall -Wextra -g -Wno-initializer-overrides
+CFLAGS		:=	-Wall -Wextra -gdwarf-2 -Wno-initializer-overrides
 
 IFLAGS		:=	-I$(INC_DIR)
 
