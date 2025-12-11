@@ -5,7 +5,7 @@
 #include <intcode.h>
 #include <runner.h>
 
-#define	PROC_MEM_CAP	0x1000
+#define	PROC_MEM_CAP	0x80000
 
 static void
 icc(proc_mem_acquire, ICC(Proc *) p)
@@ -15,7 +15,7 @@ icc(proc_mem_acquire, ICC(Proc *) p)
 
 	if (!stk_data(&p->mem))
 	{
-		stk_data(&p->mem) = malloc(PROC_MEM_CAP * sizeof(Word));
+		stk_data(&p->mem) = calloc(PROC_MEM_CAP, sizeof(Word));
 		stk_size(&p->mem) = 0;
 		stk_cap(&p->mem) = PROC_MEM_CAP;
 	}
@@ -58,6 +58,10 @@ icc(proc_write, ICC(Proc *) p, Addr pos, Word n)
 	if (pos >= stk_cap(&p->mem))
 		icc(panic, "%s: OOB write [%ld].", __func__, pos);
 	mem[pos] = n;
+
+	u8	bit_idx = pos & 63;
+	u32	idx = pos >> 6;
+	p->changed[idx] |= (1ull << bit_idx);
 }
 
 Word
@@ -89,6 +93,7 @@ icc(proc_load, ICC(Proc *) p, char *code)
 void
 icc(proc_run, ICC(Proc *) p)
 {
+	p->pc = 0;
 	icc(runner_start, p);
 }
 

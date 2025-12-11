@@ -26,7 +26,8 @@ icc(menu)
 	icc(log, "(1) Duplicate process");
 	icc(log, "(2) Run process");
 	icc(log, "(3) Watch process");
-	icc(log, "(4) Exit");
+	icc(log, "(4) Link processes");
+	icc(log, "(5) Exit");
 }
 
 bool
@@ -76,7 +77,6 @@ icc(menu_proc_load)
 static void
 icc(menu_proc_dup)
 {
-
 }
 
 static void
@@ -91,7 +91,7 @@ icc(menu_proc_run)
 	}
 	ICC(Proc *)	proc = stk_data(&core.procs) + id;
 
-	icc(runner_start, proc);
+	icc(proc_run, proc);
 }
 
 static void
@@ -107,6 +107,27 @@ icc(menu_exit)
 	core.running = false;
 }
 
+static void
+icc(menu_proc_link)
+{
+	u32	id = 0;
+
+	if (!icc(read_int, &id))
+	{
+		icc(log, "invalid process ID.");
+		return ;
+	}
+	ICC(Proc *)	proc1 = stk_data(&core.procs) + id;
+	
+	if (!icc(read_int, &id))
+	{
+		icc(log, "invalid process ID.");
+		return ;
+	}
+	ICC(Proc *)	proc2 = stk_data(&core.procs) + id;
+	icc(proc_link, proc1, proc2, ICC_LINK_OUT);
+}
+
 typedef void	(*icc_menu_fn)(void);
 
 static	icc_menu_fn	menu[] = 
@@ -115,6 +136,7 @@ static	icc_menu_fn	menu[] =
 	ICC(menu_proc_dup),
 	ICC(menu_proc_run),
 	ICC(menu_proc_watch),
+	ICC(menu_proc_link),
 	ICC(menu_exit),
 };
 

@@ -20,6 +20,7 @@ ICC_LinkType;
 typedef struct	icc_proc_s
 {
 	Addr	pc;
+	Addr	last_pc;
 	Addr	rb;
 	Word	mode;
 	Words	mem;
@@ -27,6 +28,8 @@ typedef struct	icc_proc_s
 	int		fd_out;
 	char	*stream_in;
 	char	*stream_out;
+
+	u64		*changed;
 }
 ICC_Proc;
 
