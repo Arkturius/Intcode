@@ -7,14 +7,11 @@
 
 # include <common.h>
 # include <process.h>
-# include <grid.h>
 
 typedef struct	icc_core_s
 {
 	ICC(Procs)	procs;
 	Words		memory;
-
-	ICC(Grid)	grid;
 
 	bool	running;
 	bool	gui;

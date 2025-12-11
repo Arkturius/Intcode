@@ -32,9 +32,11 @@ typedef intptr_t	iptr;
 # define	stk_decl(_type)		_type *items; u32 size; u32 capacity;
 # define	stk(_type, _name)	stk_type(_name) { stk_decl(_type) } _name;
 
-# define	stk_data(s)	(s)->items
-# define	stk_size(s)	(s)->size
-# define	stk_cap(s)	(s)->capacity
+# define	stk_data(s)		(s)->items
+# define	stk_size(s)		(s)->size
+# define	stk_cap(s)		(s)->capacity
+# define	stk_idx(s, e)	((e) - stk_data(s))
+# define	stk_item(s, i)	(stk_data(s) + (i))
 
 # define	stk_push(s, e)													\
 	({																		\
@@ -57,20 +59,25 @@ typedef intptr_t	iptr;
 		stk_data(s)[stk_size(s)];											\
 	})
 
-# define	stk_foreach(it, s)												\
+# define	stk_foreach_range(it, s, begin, end)							\
+																			\
 	for																		\
- 	(																		\
- 		typeof(stk_data(s)) it = stk_data(s);								\
- 		it < stk_data(s) + stk_size(s);										\
- 		++it																\
- 	)
+	(																		\
+		typeof(stk_data(s)) it = stk_item(s, begin);						\
+		it < stk_item(s, end);												\
+		++it																\
+	)		
 
+# define	stk_foreach(it, s)												\
+																			\
+	stk_foreach_range(it, s, 0, stk_size(s))
 
 typedef i64	Addr;
 typedef i64	Word;
 
-stk(Word, Words);
-stk(Addr, Addrs);
+stk(Word,	Words);
+stk(Addr,	Addrs);
+stk(char *, Strings);
 
 # define	ICC(x)				ICC_##x
 # define	ICC_DECL(x, ...)	ICC(x)( __VA_ARGS__ )

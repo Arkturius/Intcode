@@ -8,7 +8,7 @@ INC_DIR		:=	include
 SRCS_DIR	:=	src
 OBJS_DIR	:=	.build
 
-SRCS		:=	core.c process.c ops.c runner.c grid.c
+SRCS		:=	core.c process.c ops.c runner.c
 
 SRCS		:=	$(addprefix $(SRCS_DIR)/, $(SRCS))
 OBJS		:=	$(addprefix $(OBJS_DIR)/, $(SRCS:%.c=%.o))
