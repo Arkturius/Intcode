@@ -42,7 +42,7 @@ icc(in, ICC(Proc *) p)
 	Word	val = 0;
 
 	char	*end;
-	char	buffer[32] = {0};
+	static char	buffer[32] = {0};
 	int		r = 0;
 
 	if (!p->stream_in)
@@ -51,7 +51,7 @@ icc(in, ICC(Proc *) p)
 		{
 			r = read(p->fd_in, buffer, sizeof(buffer) - 1);
 			if (r < 0)
-				icc(panic, "read error.");
+				return ;
 		}
 		while (r == sizeof(buffer) - 1);
 		p->stream_in = buffer;
@@ -63,7 +63,7 @@ icc(in, ICC(Proc *) p)
 		icc(panic, "strtol conversion.");
 
 	if (end - buffer != r)
-		p->stream_in = strdup(end);
+		p->stream_in = end;
 
 	icc(proc_write, p, a, val);
 }

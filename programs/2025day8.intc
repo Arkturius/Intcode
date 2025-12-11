@@ -1,0 +1,80 @@
+(entry):
+	jz	0, start
+(p1):
+	raw 0
+(p2):
+	raw 0
+(t):
+	raw 0
+(save):
+	raw 0
+(xx):
+	raw 0
+(yy):
+	raw 0
+(zz):
+	raw 0
+(c):
+	raw 0
+(ptr):
+	raw 0
+(start):
+	add input, 0, p1
+	add data, 0, ptr
+(loop_1):
+	ceq [p1], data, @1
+	jnz 0, eloop_1
+	add [p1], 3, p2
+(loop_2):
+	add [p1], 0, save
+	ceq [p2], data, @1
+	jnz 0, eloop_2
+	add xx, 0, c
+(loop_coord):
+	ceq [c], c, @1
+	jnz 0, eloop_coord
+	add [p1], 0, @1
+	add [0], 0, @9
+	add [p2], 0, @1
+	mul [0], -1, @2
+	add 0, 0, t
+	add 0, [c], @3
+	mul [t], [t], 0
+	add [p1], 1, p1
+	add [p2], 1, p2
+	add [c], 1, c
+	jz  0, loop_coord
+(eloop_coord):
+	add [save], 0, p1
+	add [xx], [yy], @2
+	add [zz], 0, @5
+	add [ptr], 0, @3
+	add 0, 0, 0
+	add [ptr], 1, ptr
+	jz  0, loop_2
+(eloop_2):
+	add [p1], 3, p1
+	jz  0, loop_1
+(eloop_1):
+	add data, 0, [t]
+(loop_dist):
+	ceq [ptr], [t], @1
+	jnz 0, eloop_dist
+	add [t], 0, @1
+	out [0]
+	add [t], 1, t
+	jz  0, loop_dist
+(eloop_dist):
+	hlt
+(input):
+	raw 64554,59105,14097
+	raw 67880,84483,80607
+	raw 76613,28180,40492
+	raw 88294,63453,9700
+	raw 31330,84955,85502
+	raw 96692,50544,67083
+	raw 82280,97859,42520
+	raw 59380,20634,18076
+	raw 57968,34999,64461
+	raw 76986,66196,75490
+(data):

@@ -57,6 +57,14 @@ typedef intptr_t	iptr;
 		stk_data(s)[stk_size(s)];											\
 	})
 
+# define	stk_foreach(it, s)												\
+	for																		\
+ 	(																		\
+ 		typeof(stk_data(s)) it = stk_data(s);								\
+ 		it < stk_data(s) + stk_size(s);										\
+ 		++it																\
+ 	)
+
 
 typedef i64	Addr;
 typedef i64	Word;
