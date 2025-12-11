@@ -18,17 +18,6 @@ icc(core_spawn_proc, ICC(Core *) core, char *code)
 	stk_push(&core->procs, proc);
 }
 
-void
-icc(menu)
-{
-	icc(log, "==== INTCODE ====");
-	icc(log, "(0) Load process");
-	icc(log, "(1) Duplicate process");
-	icc(log, "(2) Run process");
-	icc(log, "(3) Watch process");
-	icc(log, "(4) Exit");
-}
-
 bool
 icc(read_str, char **line)
 {
@@ -53,12 +42,42 @@ icc(read_int, u32 *n)
 	return (true);
 }
 
-void
-icc(menu_choice, u32 *choice)
+u32
+icc(menu)
 {
-	dprintf(2, "[+] >>> ");
-	if (!icc(read_int, choice))
-		core.running = false;
+	char	*line = NULL;
+
+	printf("[ ] > ");
+	if (icc(read_str, &line) == -1)
+		icc(panic, "getline failed.");
+	
+	Strings	args = {0};
+
+	do
+	{
+		char	*tk = strtok(line, " \t\n\v\f\r");
+
+		if (!tk)
+			break ;
+		stk_push(&args, strdup(tk));
+		line = NULL;
+	}
+	while (1);
+
+	stk_foreach(arg, &args)
+	{
+		
+	}
+
+	char	*commands[] = 
+	{
+		"new", "run", "del",
+		"link", "show", "exit",
+		NULL,
+	};
+
+	u32 choice = 0;	
+	return (choice);
 }
 
 static void
@@ -129,7 +148,6 @@ icc(core_init, ICC(Core *) core)
 	core->memory = (Words){0}; // TODO: make proc pointers point into this memory location
 	// offset each proc by a good amount to avoid the programs writing to another proc memory space
 	core->procs = (ICC(Procs)){0};
-	icc(grid_init, &core->grid);
 }
 
 void
@@ -149,29 +167,11 @@ icc(core_destroy, ICC(Core *) core)
 void
 icc(core_routine, ICC(Core *) core)
 {
-	icc(grid_layout, &core->grid);
 	while (core->running)
 	{
 		u32		choice = ~0;
-		char	c[4];
 		
-		icc(grid_render, &core->grid);
-		u32 r = read(0, &c, 4);
-		if (r < 0)
-			icc(panic, "read failed.");
-
-		char rep[64] = {0};
-
-		snprintf(rep, 64, "> %d %d %d %d  ", c[0], c[1], c[2], c[3]);
-
-		icc(grid_put_text, &core->grid, rep, 4, 4, 32);
-		if (c[0] == 27)
-			core->running = false;
-
-		continue;
-		break ;
-		icc(menu);
-		icc(menu_choice, &choice);
+		choice = icc(menu);
 		if (!core->running)
 			break ;
 		if (choice >= array_size(menu))
