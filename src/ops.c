@@ -134,6 +134,5 @@ icc(hlt, ICC(Proc *) p)
 {
 	(void) p;
 
-	core.running = false;
 	return ;
 }

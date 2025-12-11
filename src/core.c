@@ -84,7 +84,7 @@ icc(menu_proc_run)
 {
 	u32	id = 0;
 
-	if (!icc(read_int, &id))
+	if (!icc(read_int, &id) || id >= stk_size(&core.procs))
 	{
 		icc(log, "invalid process ID.");
 		return ;
@@ -140,6 +140,7 @@ static	icc_menu_fn	menu[] =
 	ICC(menu_exit),
 };
 
+
 void
 icc(core_init, ICC(Core *) core)
 {
@@ -150,6 +151,7 @@ icc(core_init, ICC(Core *) core)
 	core->memory = (Words){0}; // TODO: make proc pointers point into this memory location
 	// offset each proc by a good amount to avoid the programs writing to another proc memory space
 	core->procs = (ICC(Procs)){0};
+	icc(grid_init, &core->grid);
 }
 
 void
@@ -161,29 +163,85 @@ icc(core_destroy, ICC(Core *) core)
 	core->running = false;
 	for (u32 i = 0; i < core->procs.size; ++i)
 		icc(proc_stop, stk_data(&core->procs) + i);
+
 	free(stk_data(&core->memory));
 	free(stk_data(&core->procs));
 }
 
-int
-main(void)
+void
+icc(core_routine, ICC(Core *) core)
 {
-	icc(core_init, &core);
-	while (core.running)
+	icc(grid_layout, &core->grid);
+	while (core->running)
 	{
-		u32	choice = ~0;
+		u32		choice = ~0;
+		char	c[4];
+		
+		icc(grid_render, &core->grid);
+		u32 r = read(0, &c, 4);
+		if (r < 0)
+			icc(panic, "read failed.");
 
+		char rep[64] = {0};
+
+		snprintf(rep, 64, "> %d %d %d %d  ", c[0], c[1], c[2], c[3]);
+
+		icc(grid_put_text, &core->grid, rep, 4, 4, 32);
+		if (c[0] == 27)
+			core->running = false;
+
+		continue;
+		break ;
 		icc(menu);
 		icc(menu_choice, &choice);
-		if (!core.running)
+		if (!core->running)
 			break ;
-		if (choice > array_size(menu))
+		if (choice >= array_size(menu))
 		{
 			icc(err, "invalid choice '%u'", choice);
 			continue ;
 		}
 		menu[choice]();
 	}
+}
+
+#include <termios.h>
+
+void
+icc(core_gui, ICC(Core *) core, bool restore)
+{
+	static struct termios	orig = {0};
+	struct termios			curr = {0};
+
+	if (!isatty(STDIN_FILENO))
+		return ;
+	tcgetattr(STDIN_FILENO, &curr);
+	if (!restore)
+	{
+		orig = curr;
+		curr.c_lflag &= ~(ICANON | ECHO);
+		curr.c_cc[VMIN] = 0;
+		curr.c_cc[VTIME] = 0;
+		printf("\033[?25l");
+		tcsetattr(STDIN_FILENO, TCSAFLUSH, &curr);
+	}
+	else
+	{
+		printf("\033[?25h");
+		tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig);
+	}
+	core->gui = true;
+}
+
+int
+main(void)
+{
+	ICC(Core)	core;
+
+	icc(core_init, &core);
+	icc(core_gui, &core, false);
+	icc(core_routine, &core);
+	icc(core_gui, &core, true);
 	icc(core_destroy, &core);
 	return (0);
 }
