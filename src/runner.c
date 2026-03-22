@@ -56,7 +56,7 @@ icc(decode, ICC(Proc *) p, Word *p_opcode)
 void
 icc(execute, ICC(Proc *) p, Word opcode)
 {
-	//icc(log, " PC = 0x%04lx executing: [%s]", p->pc, ICC_OP_NAMES[opcode]);
+	icc(log, " PC = 0x%04lx executing: [%s]", p->pc, ICC_OP_NAMES[opcode]);
 	ICC(OP_TABLE)[opcode](p);
 }
 
@@ -87,13 +87,13 @@ icc(dump, ICC(Proc *) p)
 		if (i % 8 == 0)
 			printf("[ 0x%08x ] ", i);
 		if (i == p->pc)
-			printf("\033[32;1m[");
+			printf("\033[42;1m[");
 		else if (i == p->last_pc)
- 			printf("\033[31;1m(");
+ 			printf("\033[41;1m(");
 		else
 			printf(" \033[90m");
 		if (icc(changed_last, p, i))
-			printf("\033[34;1m");
+			printf("\033[44;1m");
 		printf("%16ld", p->mem.items[i]);
 		if (i == p->pc)
 			printf("]");
@@ -113,11 +113,11 @@ icc(runner_start, ICC(Proc *) p)
 {
 	p->changed = malloc((p->mem.capacity + 64) >> 6);
 	memset(p->changed, 0, (p->mem.capacity + 64) >> 6);
-//	printf("\033[?25l");
+	printf("\033[?25l");
 
 	while (1)
 	{
-		//icc(dump, p);
+		icc(dump, p);
 		memset(p->changed, 0, (p->mem.capacity + 64) >> 6);
 
 		Addr	oldpc = p->pc;
@@ -130,7 +130,7 @@ icc(runner_start, ICC(Proc *) p)
 
 		p->last_pc = oldpc;
 
-// 		char c;
-// 		read(0, &c, 1);
+ 		char c;
+ 		read(0, &c, 1);
 	}
 }

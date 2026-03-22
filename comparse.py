@@ -367,7 +367,7 @@ def assemble(source: [str]) -> bool:
     for s in source:
         if LABEL_DECL(s) is None:
             new_source.append(s)
-    #STREAM.dump(new_source)
+    STREAM.dump(new_source)
     STREAM.raw()
 
 def main():
@@ -380,3 +380,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

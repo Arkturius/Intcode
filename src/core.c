@@ -3,7 +3,9 @@
 */
 
 #include <assert.h>
+#include <errno.h>
 #include <intcode.h>
+#include <string.h>
 
 ICC_Core	core = {0};
 
@@ -21,9 +23,14 @@ icc(core_spawn_proc, ICC(Core *) core, char *code)
 bool
 icc(read_str, char **line)
 {
-	u64		size;
+	u64		size = 0;
+
+	errno = 0;
+
 	int		ret = getline(line, &size, stdin);
 
+	if (ret == -1 || errno != 0)
+		icc(panic, "getline failed: %s", strerror(errno));
 	return (ret != -1);
 }
 
@@ -47,6 +54,7 @@ icc(menu)
 {
 	char	*line = NULL;
 
+	/*
 	printf("[ ] > ");
 	if (icc(read_str, &line) == -1)
 		icc(panic, "getline failed.");
@@ -64,19 +72,19 @@ icc(menu)
 	}
 	while (1);
 
-	stk_foreach(arg, &args)
-	{
-		
-	}
-
 	char	*commands[] = 
 	{
 		"new", "run", "del",
 		"link", "show", "exit",
 		NULL,
 	};
-
+	*/
 	u32 choice = 0;	
+
+	printf("choice: ");
+	if (!icc(read_int, &choice))
+		icc(panic, "read failed.");
+
 	return (choice);
 }
 
@@ -102,6 +110,7 @@ icc(menu_proc_run)
 {
 	u32	id = 0;
 
+	printf("which: ");
 	if (!icc(read_int, &id) || id >= stk_size(&core.procs))
 	{
 		icc(log, "invalid process ID.");
@@ -238,9 +247,9 @@ main(void)
 	ICC(Core)	core;
 
 	icc(core_init, &core);
-	icc(core_gui, &core, false);
+	//icc(core_gui, &core, false);
 	icc(core_routine, &core);
-	icc(core_gui, &core, true);
+	//icc(core_gui, &core, true);
 	icc(core_destroy, &core);
 	return (0);
 }

@@ -77,4 +77,25 @@
 	raw 59380,20634,18076
 	raw 57968,34999,64461
 	raw 76986,66196,75490
+	raw 71796,43277,94701
+	raw 4464,26386,81334
+	raw 93233,56878,37609
+	raw 75556,14549,85824
+	raw 88534,93664,80580
+	raw 26277,91026,24788
+	raw 56599,23040,28066
+	raw 20863,90638,31625
+	raw 56219,34974,27461
 (data):
+
+ptr = 0
+for (int i = 0; i < list.size; ++i)
+	for (int j = j + 1; i < list.size; ++i)
+		xx = (list[j].x - list[i].x)
+		yy = (list[j].y - list[i].y)
+		zz = (list[j].z - list[i].z)
+		xx *= xx
+		yy *= yy
+		zz *= zz
+		data[ptr++] = xx + yy + zz
+
